@@ -49,6 +49,28 @@ let hyperPages = (function(global) {
            			global.editor.list.applyDataSource(list, 'hyper-pages');
         		});
 			}
+		},
+		openDialog: function(name) {
+			let container=document.querySelector('.hyper-dialogs');
+			let dialog=document.querySelector('[data-hyper-dialog="'+name+'"]');
+			if (!dialog) {
+				throw new Error('Could not find dialog '+name);
+			}
+			if (container) {
+				container.classList.remove('hyper-hidden');
+			}
+			dialog.setAttribute('open','open');
+		},
+		closeDialog: function(name) {
+			let container=document.querySelector('.hyper-dialogs');
+			let dialog=document.querySelector('[data-hyper-dialog="'+name+'"]');
+			if (!dialog) {
+				throw new Error('Could not find dialog '+name);
+			}
+			dialog.removeAttribute('open');			
+			if (container) {
+				container.classList.add('hyper-hidden');
+			}
 		}
 	}
 })(this);
