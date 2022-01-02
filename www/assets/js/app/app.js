@@ -2,35 +2,62 @@
 let simplyApp = simply.app({
 	routes: {
 	},
-	commands: {
-	},
 	keyboard: {
 		default: {
 		}
+	},
+	commands: {
+		openDialog: function(el, value) {
+			hyperPages.openDialog(value);
+		},
+		closeDialog: function(el, value) {
+			hyperPages.closeDialog(value);
+		},
+		createKanbanBoard: function(form, values) {
+			let path = '/'+values.name+'/';
+			if (editor.currentData[path]) {
+				alert(path+' already exists');
+			} else {
+				simplyApp.commands.closeDialog(form, 'kanbanBoard');
+				editor.currentData[path] = {
+					'data-simply-template': 'kanban',
+					'title': values.name,
+					'columns': [
+						{
+							'label':'Backlog',
+							'cards':[]
+						},
+						{
+							'label':'Todo',
+							'cards':[]
+						},
+						{
+							'label':'Doing',
+							'cards':[]
+						},
+						{
+							'label':'Done',
+							'cards':[]
+						}
+					]
+				};
+				hyperPages.goto(path);
+			}
+		},
+		addCard: function(el, value) {
+			let listEl = el.closest('.kanban-list');
+			let cardsEl = listEl.querySelector('.kanban-cards');
+			let list = cardsEl.dataBinding.get();
+			list.push({
+				description: 'New Card'
+			});
+		}
+	},
+	actions: {
+
 	},
 	view: {
 	}
 });
 
-document.addEventListener('simply-content-loaded', function() {
-	hyperPages.goto('/');
-});
-
-function waitForTemplates(callback) {
-	if (!document.getElementById('default')) {
-		window.setTimeout(function() { waitForTemplates(callback) }, 100);
-	} else {
-		callback();
-	}
-}
-
-waitForTemplates(function() {
-	var script = document.createElement('script');
-	script.setAttribute('src','//cdn.simplyedit.io/1/simply-edit.js');
-	script.setAttribute('data-api-key','muze');
-	script.setAttribute('data-simply-settings','seSettings');
-	script.setAttribute('data-simply-images','/img/');
-	script.setAttribute('data-simply-files','/files/');
-	script.setAttribute('data-storage-get-post-only',1);
-	document.body.appendChild(script);
-});
+hyperPages.goto('/');
